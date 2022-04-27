@@ -35,7 +35,7 @@ void loop()
     // ln.checkForTurn(0, 1, 3);
     // ln.checkForTurn(3, 4, 1);
     // ln.lineFollower();
-    // ln.endOfLine();;
+    // ln.endOfLine();
     motors.setSpeeds(speedValue, speedValue);
   }
 
@@ -51,6 +51,14 @@ void loop()
     charge = cc.calculatePowerConsumption(charge, dangerZone);
     cc.updateDisplayInformation(displayText);
     runTime = millis();
+
+    Serial.println(cc.getCarDistance());
+    Serial.println(cc.calculatePowerConsumption(charge, dangerZone));
+    Serial.println(cc.calculateDeltaSpeed(100));
+    Serial.println(cc.calculateAverageCarSpeed());
+    Serial.println(cc.calculateMaxCarSpeed());
+    Serial.println(cc.calculateSpeedOverPercent(70, true));
+    Serial.println("------------------------------------");
   }
 
   if (millis() - clearTime >= 2000)

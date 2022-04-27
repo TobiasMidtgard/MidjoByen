@@ -19,7 +19,7 @@ float carController::getCarDistance()
 
 float carController::calculatePowerConsumption(int currentPower, int dangerZone)
 {
-    float powerConsumption = (((getCarDistance() - lastDistance) * (1 + (calculateAverageCarSpeed()) / 5))) / carDrivingDistance;
+    float powerConsumption = ((getCarDistance() - lastDistance) / carDrivingDistance);
     // Serial.println(powerConsumption);
     // Serial.println(currentPower);
     lastDistance = getCarDistance();
@@ -45,7 +45,8 @@ float carController::calculateDeltaSpeed(float timeFrame)
 
 float carController::calculateAverageCarSpeed()
 {
-    float carSpeed = ((getCarDistance() / 100) / (millis() / 1000));
+    static float runTime = millis() / 1000;
+    float carSpeed = ((getCarDistance()) / (runTime));
     return carSpeed;
 }
 
