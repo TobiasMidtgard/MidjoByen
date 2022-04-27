@@ -9,6 +9,7 @@
 class carController
 {
 public:
+
     /**
      * @brief Finds the distance the car has traversed with the help of the Zumo32u4's built in encoders.
      *

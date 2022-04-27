@@ -18,8 +18,8 @@ float carController::getCarDistance()
 
 float carController::calculatePowerConsumption(int currentPower, int dangerZone)
 {
-    float powerConsumption = (getCarDistance() - lastDistance) / carDrivingDistance;
-    int lastDistance = getCarDistance();
+    float powerConsumption = ((getCarDistance() - lastDistance) * (1 + (calculateAverageCarSpeed()) / 5)) / carDrivingDistance;
+    lastDistance = getCarDistance();
     float batteryChargeLeft = currentPower - powerConsumption;
     if (batteryChargeLeft <= dangerZone)
     {

@@ -15,5 +15,5 @@ static Zumo32U4LineSensors lineSensor;
 static Zumo32U4Buzzer buzzer;
 
 // Driving distance in meters
-static int carDrivingDistance = 10;
+static int carDrivingDistance = 15;
 static int speedValue = 400;
