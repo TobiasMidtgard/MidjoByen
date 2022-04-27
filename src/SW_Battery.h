@@ -1,5 +1,9 @@
 #pragma once
+
+// Define the class
 #define SW_Battery_h
+
+// Includes needed for this file:
 #include "common.h"
 
 //* Controls the car:
