@@ -33,22 +33,22 @@ public:
     /**
      * @brief Calculates the average speed over a time frame.
      *
-     * @param timeFrame the time frame of the calculation.
+     * @param timeFrame the time frame of the calculation in ms.
      * @return the average speed over the time frame.
      */
-    float calculateDeltaSpeed(int timeFrame);
+    float calculateDeltaSpeed(float timeFrame);
 
     /**
      * @brief Calculates the average speed of the car.
      *
-     * @return the average speed of the car in m/s.
+     * @return the average speed of the car in cm/s.
      */
     float calculateAverageCarSpeed();
 
     /**
      * @brief Calculates the maximum speed of the car.
      *
-     * @return the maximum speed of the car in m/s.
+     * @return the maximum speed of the car in cm/s.
      */
     float calculateMaxCarSpeed();
 
@@ -58,7 +58,7 @@ public:
      * @param percent The percentage of the driving distance.
      * @return time the car drove over the percent of maximum speed in seconds.
      */
-    int calculateSpeedOverPercent(int percent);
+    float calculateSpeedOverPercent(int percent, bool onlyWhenDriving);
 
     /**
      * @brief Updates the display with set information.

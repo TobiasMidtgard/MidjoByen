@@ -1,24 +1,27 @@
 #include "SW_Battery.h"
 #include "common.h"
 
-static int distanceLeft = 0;
-static int distanceRight = 0;
-static int maxSpeed = 0;
+static float distanceLeft = 0;
+static float distanceRight = 0;
+static float maxSpeed = 0;
 static int lastDistance = 0;
+static float lastValue = 0;
 
 static unsigned long deltaTime = 0;
 
 float carController::getCarDistance()
 {
-    distanceLeft += encoders.getCountsAndResetLeft() / 79;
-    distanceRight += encoders.getCountsAndResetRight() / 79;
+    distanceLeft += float(encoders.getCountsAndResetLeft()) / 81;
+    distanceRight += float(encoders.getCountsAndResetRight()) / 81;
     float avgDistance = (distanceLeft + distanceRight) / 2;
     return avgDistance;
 }
 
 float carController::calculatePowerConsumption(int currentPower, int dangerZone)
 {
-    float powerConsumption = ((getCarDistance() - lastDistance) * (1 + (calculateAverageCarSpeed()) / 5)) / carDrivingDistance;
+    float powerConsumption = (((getCarDistance() - lastDistance) * (1 + (calculateAverageCarSpeed()) / 5))) / carDrivingDistance;
+    // Serial.println(powerConsumption);
+    // Serial.println(currentPower);
     lastDistance = getCarDistance();
     float batteryChargeLeft = currentPower - powerConsumption;
     if (batteryChargeLeft <= dangerZone)
@@ -29,12 +32,13 @@ float carController::calculatePowerConsumption(int currentPower, int dangerZone)
     return batteryChargeLeft;
 }
 
-float carController::calculateDeltaSpeed(int timeFrame)
+float carController::calculateDeltaSpeed(float timeFrame)
 {
     if (millis() - deltaTime >= timeFrame)
     {
+        float deltaSpeed = (((getCarDistance()) - lastValue)) / ((timeFrame) / 1000);
+        lastValue = getCarDistance();
         deltaTime = millis();
-        float deltaSpeed = (distanceLeft - distanceRight) / timeFrame;
         return deltaSpeed;
     }
 }
@@ -47,7 +51,7 @@ float carController::calculateAverageCarSpeed()
 
 float carController::calculateMaxCarSpeed()
 {
-    float carSpeed = calculateDeltaSpeed(1000);
+    float carSpeed = calculateDeltaSpeed(100);
     if (maxSpeed < carSpeed)
     {
         maxSpeed = carSpeed;
@@ -55,16 +59,42 @@ float carController::calculateMaxCarSpeed()
     return maxSpeed;
 }
 
-int carController::calculateSpeedOverPercent(int percent)
+float carController::calculateSpeedOverPercent(int percent, bool onlyWhenDriving)
 {
-    int timeOverDelta = 0;
-    for (int time = 0; time >= 60; time++)
+    static unsigned long millisCompensation = 0;
+    static float timeOverDelta = 0;
+    static float drivingTime = 0;
+    static float percentAboveSpeed = 0;
+
+    int currentSpeed = (calculateDeltaSpeed(100));
+
+    if ((calculateMaxCarSpeed() * (percent / 100)) < currentSpeed)
     {
-        if (calculateMaxCarSpeed() < calculateDeltaSpeed(1000) * (percent / 100))
-        {
-            timeOverDelta++;
-        }
+        timeOverDelta += millis() - millisCompensation;
     }
+
+    if (currentSpeed > 0)
+    {
+        drivingTime += millis() - millisCompensation;
+    }
+
+    millisCompensation = millis();
+    if (onlyWhenDriving)
+    {
+        percentAboveSpeed = ((timeOverDelta / drivingTime) * 100);
+    }
+    else if (!onlyWhenDriving)
+    {
+        percentAboveSpeed = ((timeOverDelta / millisCompensation) * 100);
+    }
+
+    Serial.println(timeOverDelta);
+    Serial.println(drivingTime);
+    Serial.println(timeOverDelta / millisCompensation);
+    Serial.println(percentAboveSpeed);
+    Serial.println("----------------");
+
+    return percentAboveSpeed;
 }
 
 void carController::updateDisplayInformation(String displayText)

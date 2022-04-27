@@ -18,7 +18,7 @@ int charge = 100;
 void setup()
 {
   // calibrates the Zumo32u4 and waits for the user's input before continuing.
-  ln.init();
+  // ln.init();
 
   runTime = millis();
   clearTime = millis();
@@ -28,15 +28,15 @@ void setup()
 void loop()
 {
   // Get the carge left in %.
-  charge = cc.calculatePowerConsumption(charge, dangerZone);
-
+  // charge = cc.calculatePowerConsumption(charge, dangerZone);
   if (charge > 0)
   {
-    encoders.init();
-    ln.checkForTurn(0, 1, 3);
-    ln.checkForTurn(3, 4, 1);
-    ln.lineFollower();
-    ln.endOfLine();
+    // encoders.init();
+    // ln.checkForTurn(0, 1, 3);
+    // ln.checkForTurn(3, 4, 1);
+    // ln.lineFollower();
+    // ln.endOfLine();;
+    motors.setSpeeds(speedValue, speedValue);
   }
 
   else if (charge <= 0)
@@ -44,11 +44,15 @@ void loop()
     motors.setSpeeds(0, 0);
   }
 
+  String displayText = String((cc.calculateSpeedOverPercent(70, true)));
+
   if (millis() - runTime >= 1000)
   {
-    cc.updateDisplayInformation(String(charge));
+    charge = cc.calculatePowerConsumption(charge, dangerZone);
+    cc.updateDisplayInformation(displayText);
     runTime = millis();
   }
+
   if (millis() - clearTime >= 2000)
   {
     lcd.clear();
