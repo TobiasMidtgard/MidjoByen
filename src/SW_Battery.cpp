@@ -88,12 +88,6 @@ float carController::calculateSpeedOverPercent(int percent, bool onlyWhenDriving
         percentAboveSpeed = ((timeOverDelta / millisCompensation) * 100);
     }
 
-    Serial.println(timeOverDelta);
-    Serial.println(drivingTime);
-    Serial.println(timeOverDelta / millisCompensation);
-    Serial.println(percentAboveSpeed);
-    Serial.println("----------------");
-
     return percentAboveSpeed;
 }
 
