@@ -49,7 +49,6 @@ float carController::calculateAverageCarSpeed()
     float carSpeed = ((getCarDistance()) / (runTime));
     return carSpeed;
 }
-
 float carController::calculateMaxCarSpeed()
 {
     float carSpeed = calculateDeltaSpeed(100);
