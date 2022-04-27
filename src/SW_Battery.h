@@ -3,13 +3,13 @@
 #include "common.h"
 
 //* Controls the car:
-// Finds the distance between.
-// Calculates the power consmuption of the car.
-// Updates the car's display to show information.
+/* Finds the distance between.
+ Calculates the power consmuption of the car.
+ Updates the car's display to show information.
+*/
 class carController
 {
 public:
-
     /**
      * @brief Finds the distance the car has traversed with the help of the Zumo32u4's built in encoders.
      *
