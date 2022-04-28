@@ -36,7 +36,7 @@ float carController::calculateDeltaSpeed(float timeFrame)
 {
     if (millis() - deltaTime >= timeFrame)
     {
-        float deltaSpeed = (((getCarDistance()) - lastValue)) / ((timeFrame) / 1000);
+        float deltaSpeed = (((getCarDistance()) - lastValue)) / ((millis() - deltaTime) / 1000);
         lastValue = getCarDistance();
         deltaTime = millis();
         return deltaSpeed;
