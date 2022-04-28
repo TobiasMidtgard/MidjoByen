@@ -9,7 +9,7 @@ static float lastValue = 0;
 
 static unsigned long deltaTime = 0;
 
-float carController::getCarDistance()
+float SWBattery::getCarDistance()
 {
     distanceLeft += float(encoders.getCountsAndResetLeft()) / 81;
     distanceRight += float(encoders.getCountsAndResetRight()) / 81;
@@ -17,7 +17,7 @@ float carController::getCarDistance()
     return avgDistance;
 }
 
-float carController::calculatePowerConsumption(int currentPower, int dangerZone)
+float SWBattery::calculatePowerConsumption(int currentPower, int dangerZone)
 {
     float powerConsumption = ((getCarDistance() - lastDistance) / carDrivingDistance);
     // Serial.println(powerConsumption);
@@ -32,7 +32,7 @@ float carController::calculatePowerConsumption(int currentPower, int dangerZone)
     return batteryChargeLeft;
 }
 
-float carController::calculateDeltaSpeed(float timeFrame)
+float SWBattery::calculateDeltaSpeed(float timeFrame)
 {
     if (millis() - deltaTime >= timeFrame)
     {
@@ -43,13 +43,13 @@ float carController::calculateDeltaSpeed(float timeFrame)
     }
 }
 
-float carController::calculateAverageCarSpeed()
+float SWBattery::calculateAverageCarSpeed()
 {
     static float runTime = millis() / 1000;
     float carSpeed = ((getCarDistance()) / (runTime));
     return carSpeed;
 }
-float carController::calculateMaxCarSpeed()
+float SWBattery::calculateMaxCarSpeed()
 {
     float carSpeed = calculateDeltaSpeed(100);
     if (maxSpeed < carSpeed)
@@ -59,7 +59,7 @@ float carController::calculateMaxCarSpeed()
     return maxSpeed;
 }
 
-float carController::calculateSpeedOverPercent(int percent, bool onlyWhenDriving)
+float SWBattery::calculateSpeedOverPercent(int percent, bool onlyWhenDriving)
 {
     static unsigned long millisCompensation = 0;
     static float timeOverDelta = 0;
@@ -91,7 +91,7 @@ float carController::calculateSpeedOverPercent(int percent, bool onlyWhenDriving
     return percentAboveSpeed;
 }
 
-void carController::updateDisplayInformation(String displayText)
+void SWBattery::updateDisplayInformation(String displayText)
 {
     lcd.setCursor(0, 0);
     lcd.print(String(displayText));

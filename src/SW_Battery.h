@@ -11,7 +11,7 @@
  Calculates the power consmuption of the car.
  Updates the car's display to show information.
 */
-class carController
+class SWBattery
 {
 public:
     /**
