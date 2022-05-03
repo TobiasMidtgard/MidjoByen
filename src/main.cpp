@@ -19,6 +19,26 @@ void setup()
 // loop() is called in an endless loop.
 void loop()
 {
+  float deltaSpeed = SWB.calculateDeltaSpeed(100);
+
+  if (millis() - runTime >= 1000)
+  {
+    charge = SWB.calculatePowerConsumption(dangerZone);
+    runTime = millis();
+    Serial.println(SWB.getCarDistance());
+    Serial.println(charge);
+    Serial.println(SWB.calculateAverageCarSpeed(true));
+    Serial.println(deltaSpeed);
+    Serial.println(SWB.calculateMaxCarSpeed());
+    Serial.println(SWB.calculateSpeedOverPercent(70, true));
+    Serial.println("------------------------------------");
+    if (millis() - clearTime >= 2000)
+    {
+      lcd.clear();
+      clearTime = millis();
+    }
+  }
+
   if (charge > 0)
   {
     CC.loop();
@@ -32,27 +52,5 @@ void loop()
   else if (charge <= 0)
   {
     motors.setSpeeds(0, 0);
-  }
-
-  String displayText = String((SWB.calculateSpeedOverPercent(70, true)));
-
-  if (millis() - runTime >= 1000)
-  {
-    charge = SWB.calculatePowerConsumption(charge, dangerZone);
-    SWB.updateDisplayInformation(displayText);
-    runTime = millis();
-
-    Serial.println(SWB.getCarDistance());
-    Serial.println(SWB.calculatePowerConsumption(charge, dangerZone));
-    Serial.println(SWB.calculateDeltaSpeed(100));
-    Serial.println(SWB.calculateAverageCarSpeed());
-    Serial.println(SWB.calculateMaxCarSpeed());
-    Serial.println(SWB.calculateSpeedOverPercent(70, true));
-    Serial.println("------------------------------------");
-    if (millis() - clearTime >= 2000)
-    {
-      lcd.clear();
-      clearTime = millis();
-    }
   }
 }

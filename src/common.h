@@ -16,11 +16,12 @@ static Zumo32U4LineSensors lineSensor;
 static Zumo32U4Buzzer buzzer;
 
 // Driving distance in meters
-static int carDrivingDistance = 10;
+static const int carDrivingDistance = 10;
 // constant value for when the user should be notified about the battery level.
 static const int dangerZone = 10;
 
 static int speedValue = 400;
+static float deltaSpeed = 0;
 
 // Battery charge left in %.
 static int charge = 100;
@@ -35,3 +36,4 @@ static int map_size = 4;
 
 static unsigned long runTime = 0;
 static unsigned long clearTime = 0;
+static float millisCompensation = 0;

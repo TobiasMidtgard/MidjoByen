@@ -2,9 +2,6 @@
 #define CarController_h
 #include "common.h"
 
-/** @addtogroup CarController
- * @brief Controls the cars monvement, calibrates the sensors, controls task proseedings and reads map data.
- */
 class CarController
 {
 public:

@@ -4,26 +4,27 @@
 static float distanceLeft = 0;
 static float distanceRight = 0;
 static float maxSpeed = 0;
-static int lastDistance = 0;
+static float lastDistance = 0;
 static float lastValue = 0;
 
-static unsigned long deltaTime = 0;
+static float deltaTime = 0;
 
 float SWBattery::getCarDistance()
 {
     distanceLeft += float(encoders.getCountsAndResetLeft()) / 81;
     distanceRight += float(encoders.getCountsAndResetRight()) / 81;
     float avgDistance = (distanceLeft + distanceRight) / 2;
+
     return avgDistance;
 }
 
-float SWBattery::calculatePowerConsumption(int currentPower, int dangerZone)
+float SWBattery::calculatePowerConsumption(int dangerZone)
 {
-    float powerConsumption = ((getCarDistance() - lastDistance) / carDrivingDistance);
-    // Serial.println(powerConsumption);
-    // Serial.println(currentPower);
-    lastDistance = getCarDistance();
-    float batteryChargeLeft = currentPower - powerConsumption;
+    static float batteryChargeLeft = 100;
+    float currentDistance = getCarDistance();
+    float powerConsumption = ((currentDistance - lastDistance) / carDrivingDistance);
+    lastDistance = currentDistance;
+    batteryChargeLeft = batteryChargeLeft - powerConsumption;
     if (batteryChargeLeft <= dangerZone)
     {
         updateDisplayInformation(String(batteryChargeLeft));
@@ -34,51 +35,71 @@ float SWBattery::calculatePowerConsumption(int currentPower, int dangerZone)
 
 float SWBattery::calculateDeltaSpeed(float timeFrame)
 {
+
+    float millisAsFloat = millis();
     if (millis() - deltaTime >= timeFrame)
     {
-        float deltaSpeed = (((getCarDistance()) - lastValue)) / ((millis() - deltaTime) / 1000);
+        deltaSpeed = (((getCarDistance()) - lastValue)) / ((millisAsFloat - deltaTime) / 1000);
         lastValue = getCarDistance();
         deltaTime = millis();
         return deltaSpeed;
     }
 }
 
-float SWBattery::calculateAverageCarSpeed()
+float SWBattery::calculateAverageCarSpeed(bool onlyWhenDriving)
 {
-    static float runTime = millis() / 1000;
-    float carSpeed = ((getCarDistance()) / (runTime));
-    return carSpeed;
-}
-float SWBattery::calculateMaxCarSpeed()
-{
-    float carSpeed = calculateDeltaSpeed(100);
-    if (maxSpeed < carSpeed)
-    {
-        maxSpeed = carSpeed;
-    }
-    return maxSpeed;
-}
-
-float SWBattery::calculateSpeedOverPercent(int percent, bool onlyWhenDriving)
-{
-    static unsigned long millisCompensation = 0;
-    static float timeOverDelta = 0;
+    static float millisCompensation = millis() - 1000;
     static float drivingTime = 0;
-    static float percentAboveSpeed = 0;
+    static float carSpeed = 0;
 
-    int currentSpeed = (calculateDeltaSpeed(100));
-
-    if ((calculateMaxCarSpeed() * (percent / 100)) < currentSpeed)
-    {
-        timeOverDelta += millis() - millisCompensation;
-    }
-
-    if (currentSpeed > 0)
+    if (deltaSpeed > 0)
     {
         drivingTime += millis() - millisCompensation;
     }
 
     millisCompensation = millis();
+
+    if (onlyWhenDriving)
+    {
+        carSpeed = (getCarDistance() / (drivingTime / 1000));
+    }
+
+    else if (!onlyWhenDriving)
+    {
+        float runTime = millis() / 1000;
+        carSpeed = (getCarDistance() / (runTime));
+    }
+
+    return carSpeed;
+}
+
+float SWBattery::calculateMaxCarSpeed()
+{
+    if (maxSpeed < deltaSpeed)
+    {
+        maxSpeed = deltaSpeed;
+    }
+    return maxSpeed;
+}
+
+float SWBattery::calculateSpeedOverPercent(float percent, bool onlyWhenDriving)
+{
+    static unsigned long millisCompensation = millis();
+    static float timeOverDelta = 0;
+    static float drivingTime = 0;
+    static float percentAboveSpeed = 0;
+
+    if ((calculateMaxCarSpeed() * (percent / 100)) < deltaSpeed)
+    {
+        timeOverDelta += millis() - millisCompensation;
+    }
+
+    if (deltaSpeed > 0)
+    {
+        drivingTime += millis() - millisCompensation;
+    }
+    millisCompensation = millis();
+
     if (onlyWhenDriving)
     {
         percentAboveSpeed = ((timeOverDelta / drivingTime) * 100);

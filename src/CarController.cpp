@@ -16,7 +16,7 @@ void CarController::init()
     lcd.print("to calibrate");
 
     buttonB.waitForButton();
-
+    calibration();
     lcd.clear();
     lcd.setCursor(0, 0);
 
